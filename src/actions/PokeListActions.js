@@ -1,10 +1,12 @@
 import axios from 'axios'
 import {POKE_LIST_FETCH_SUCCESS} from "./types";
 
-export const pokeListFetch = () => {
+const INITIAL_URL = "https://pokeapi.co/api/v2/pokemon?limit=25";
+
+export const pokeListFetch = (dataUrl = INITIAL_URL) => {
     return(dispatch) => {
         console.log('dispatching')
-        axios.get("https://pokeapi.co/api/v2/pokemon?limit=15")
+        axios.get(dataUrl)
             .then(({data: {results, next}}) => {
                 console.log(results);
                 console.log('next');

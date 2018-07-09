@@ -26,6 +26,7 @@ class Gen1List extends Component {
     render(){
         return (
             <ListView
+                onEndReached={() => {this.props.pokeListFetch(this.props.next)}}
                 style={{marginBottom:80}}
                 enableEmptySections
                 dataSource={this.props.pokeList}
@@ -35,7 +36,6 @@ class Gen1List extends Component {
     }
 
     renderRow(pokemon) {
-        console.log(this.props && this.props.pokeList)
         const {
             headerTextStyle,
             nameTextStyle,
@@ -68,50 +68,6 @@ class Gen1List extends Component {
 
                 </CardSection>
             </Card>
-        )
-    }
-
-    renderPokedex() {
-        return this.props.pokeList && this.props.pokeList.map(pokemon => {
-            const {
-                headerTextStyle,
-                nameTextStyle,
-                headerContentStyle,
-                thumbnailStyle,
-                thumbnailContainerStyle
-            } = styles;
-            return (
-                <Card key={pokemon.id}>
-                    <CardSection>
-                        <View style={thumbnailContainerStyle}>
-                            <Image
-                                source={{uri: pokemon.imageUrl}}
-                                style={thumbnailStyle}>
-
-                            </Image>
-                        </View>
-                        <View style={headerContentStyle}>
-                            <Text style={headerTextStyle}>
-                                {pokemon.id}
-                            </Text>
-                            <Text style={nameTextStyle}>
-                                {pokemon.name}
-                            </Text>
-                        </View>
-
-                    </CardSection>
-                </Card>
-            )
-        })
-    }
-
-    bar() {
-
-        return (
-            <ScrollView style={{marginBottom:80}}>
-                {this.renderPokedex()}
-            </ScrollView>
-
         )
     }
 }

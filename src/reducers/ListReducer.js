@@ -8,7 +8,11 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action ) => {
     switch(action.type){
         case POKE_LIST_FETCH_SUCCESS:
-            return action.payload;
+            return {
+                ...state,
+                results: [...state.results, ...action.payload.results],
+                next: action.payload.next
+            }
         default:
             return state;
     }
