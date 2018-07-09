@@ -1,6 +1,9 @@
 import {POKE_LIST_FETCH_SUCCESS} from "../actions/types";
 
-const INITIAL_STATE = [];
+const INITIAL_STATE = {
+    results: [],
+    next: ''
+};
 
 export default (state = INITIAL_STATE, action ) => {
     switch(action.type){

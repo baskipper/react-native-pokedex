@@ -5,8 +5,10 @@ export const pokeListFetch = () => {
     return(dispatch) => {
         console.log('dispatching')
         axios.get("https://pokeapi.co/api/v2/pokemon?limit=15")
-            .then(({data: {results}}) => {
+            .then(({data: {results, next}}) => {
                 console.log(results);
+                console.log('next');
+                console.log(next);
                 console.log(results[0].url.split('/'));
                 results = results.map((result) => {
                     const subStr = result.url.split('/');
@@ -23,7 +25,7 @@ export const pokeListFetch = () => {
                 console.log(results);
                 dispatch({
                     type: POKE_LIST_FETCH_SUCCESS,
-                    payload: results
+                    payload: {results, next}
                 })
             })
             .catch(err => {

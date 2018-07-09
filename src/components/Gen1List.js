@@ -140,14 +140,18 @@ const styles = {
 };
 
 const mapStateToProps = (state => {
+    const {results, next} = state.pokemonList;
+    console.log('state of list');
+    console.log(state);
     console.log(state.pokemonList)
     this.ds = new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
     });
 
     return {
-        pokeList: this.ds.cloneWithRows(state.pokemonList),
-        dataLoaded: state.pokemonList.length > 0
+        pokeList: this.ds.cloneWithRows(results),
+        dataLoaded: results.length > 0,
+        next
     }
 });
 
