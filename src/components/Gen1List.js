@@ -1,38 +1,60 @@
 import React, {Component} from 'react';
-import {View, Image, Text, ScrollView, ListView} from 'react-native';
+import {View, Image, Text, TouchableOpacity, ListView} from 'react-native';
 import {connect} from 'react-redux';
-import {pokeListFetch} from "../actions";
+import {pokeListFetch, pokemonFetch} from "../actions";
 
-import {Card, CardSection} from "./common";
+import {Card, CardSection, Spinner, Confirm} from "./common";
 
 class Gen1List extends Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {showModal: false}
+        this.openModal = this.openModal.bind(this);
+    }
+
     componentDidMount() {
         console.log(this.props.pokeList)
-         if (!this.props.dataLoaded) {
+        if (!this.props.dataLoaded) {
             this.props.pokeListFetch();
-         }
+        }
 
     }
 
-    componentWillUpdate()
-    {
-        console.log('updating')
-        console.log(this.props.pokeList)
-
-
-    }
-
-    render(){
+    render() {
         return (
-            <ListView
-                onEndReached={() => {this.props.pokeListFetch(this.props.next)}}
-                style={{marginBottom:80}}
-                enableEmptySections
-                dataSource={this.props.pokeList}
-                renderRow={this.renderRow}
-            />
+            this.props.dataLoaded ?
+                <View>
+                    <ListView
+                        onEndReached={() => {
+                            this.props.pokeListFetch(this.props.next)
+                        }}
+                        style={{marginBottom: 80}}
+                        enableEmptySections
+                        dataSource={this.props.pokeList}
+                        renderRow={this.renderRow.bind(this)}
+                    >
+                    </ListView>
+                    <Confirm
+                        onAccept={null}
+                        onDecline={null}
+                        visible={this.state.showModal}
+                    />
+                </View>
+                :
+                <Card>
+                    <CardSection>
+                        <Spinner/>
+                    </CardSection>
+                </Card>
+
         )
+    }
+
+    openModal(pokemon) {
+        console.log(pokemon)
+        this.props.pokemonFetch(parseInt(pokemon.id));
+        this.setState({showModal: true})
     }
 
     renderRow(pokemon) {
@@ -44,30 +66,34 @@ class Gen1List extends Component {
             thumbnailContainerStyle
         } = styles;
         return (
-            <Card key={pokemon.id}>
-                <CardSection>
-                    <View style={thumbnailContainerStyle}>
-                        <Image
+            <TouchableOpacity onPress={() => this.openModal(pokemon)}>
+                <Card key={pokemon.id}>
+                    <CardSection>
+                        <View style={thumbnailContainerStyle}>
+                            <Image
 
-                            source={
-                                {uri: pokemon.imageUrl,
-                                    cache: 'only-if-cached'
-                                }}
-                            style={thumbnailStyle}>
+                                source={
+                                    {
+                                        uri: pokemon.imageUrl,
+                                        cache: 'only-if-cached'
+                                    }}
+                                style={thumbnailStyle}>
 
-                        </Image>
-                    </View>
-                    <View style={headerContentStyle}>
-                        <Text style={headerTextStyle}>
-                            {pokemon.id}
-                        </Text>
-                        <Text style={nameTextStyle}>
-                            {pokemon.name}
-                        </Text>
-                    </View>
+                            </Image>
+                        </View>
+                        <View style={headerContentStyle}>
+                            <Text style={headerTextStyle}>
+                                {pokemon.id}
+                            </Text>
+                            <Text style={nameTextStyle}>
+                                {pokemon.name}
+                            </Text>
+                        </View>
+                    </CardSection>
 
-                </CardSection>
-            </Card>
+                </Card>
+            </TouchableOpacity>
+
         )
     }
 }
@@ -111,4 +137,4 @@ const mapStateToProps = (state => {
     }
 });
 
-export default connect(mapStateToProps, {pokeListFetch})(Gen1List);
+export default connect(mapStateToProps, {pokeListFetch, pokemonFetch})(Gen1List);
