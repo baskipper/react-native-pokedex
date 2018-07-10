@@ -3,7 +3,7 @@ import {View, Image, Text, TouchableOpacity, ListView} from 'react-native';
 import {connect} from 'react-redux';
 import {pokeListFetch, pokemonFetch} from "../actions";
 
-import {Card, CardSection, Spinner, Confirm} from "./common";
+import {Card, CardSection, Spinner, DetailModal} from "./common";
 
 class Gen1List extends Component {
 
@@ -11,6 +11,8 @@ class Gen1List extends Component {
         super(props);
         this.state = {showModal: false}
         this.openModal = this.openModal.bind(this);
+        this.renderRow = this.renderRow.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     componentDidMount() {
@@ -22,6 +24,15 @@ class Gen1List extends Component {
     }
 
     render() {
+
+        const {
+            headerTextStyle,
+            nameTextStyle,
+            headerContentStyle,
+            thumbnailStyle,
+            thumbnailContainerStyle
+        } = styles;
+
         return (
             this.props.dataLoaded ?
                 <View>
@@ -32,14 +43,38 @@ class Gen1List extends Component {
                         style={{marginBottom: 80}}
                         enableEmptySections
                         dataSource={this.props.pokeList}
-                        renderRow={this.renderRow.bind(this)}
+                        renderRow={this.renderRow}
                     >
                     </ListView>
-                    <Confirm
-                        onAccept={null}
-                        onDecline={null}
+                    <DetailModal
+                        onAccept={this.closeModal}
                         visible={this.state.showModal}
-                    />
+                    >
+                        <Card>
+                        <CardSection>
+                            <View style={thumbnailContainerStyle}>
+                                <Image
+
+                                    source={
+                                        {
+                                            uri: this.props.currentPokemon.sprite,
+                                            cache: 'only-if-cached'
+                                        }}
+                                    style={thumbnailStyle}>
+
+                                </Image>
+                            </View>
+                            <View style={headerContentStyle}>
+                                <Text style={headerTextStyle}>
+                                    {this.props.currentPokemon.id}
+                                </Text>
+                                <Text style={nameTextStyle}>
+                                    {this.props.currentPokemon.name}
+                                </Text>
+                            </View>
+                        </CardSection>
+                        </Card>
+                    </DetailModal>
                 </View>
                 :
                 <Card>
@@ -55,6 +90,10 @@ class Gen1List extends Component {
         console.log(pokemon)
         this.props.pokemonFetch(parseInt(pokemon.id));
         this.setState({showModal: true})
+    }
+
+    closeModal() {
+        this.setState({showModal: false})
     }
 
     renderRow(pokemon) {
@@ -131,6 +170,7 @@ const mapStateToProps = (state => {
     });
 
     return {
+        currentPokemon: state.currentPokemon,
         pokeList: this.ds.cloneWithRows(results),
         dataLoaded: results.length > 0,
         next
