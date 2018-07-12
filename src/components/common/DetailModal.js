@@ -5,7 +5,7 @@ import {Button} from './Button';
 import {Spinner} from "./Spinner";
 
 const DetailModal = ({visible, children, onAccept, loading}) => {
-    const {cardSectionStyle, textStyle, containerStyle} = styles;
+    const {cardSectionStyle,  containerStyle} = styles;
     return (
         <Modal
 
@@ -30,15 +30,12 @@ const DetailModal = ({visible, children, onAccept, loading}) => {
     );
 };
 
+// justifyContent = vertical. flex-end, center, flex-start, space-between, space-around
+// alignItems = horizontal
+
 const styles = {
     cardSectionStyle: {
         justifyContent: 'center'
-    },
-    textStyle: {
-        flex: 1,
-        fontSize: 18,
-        textAlign: 'center',
-        lineHeight: 40
     },
     containerStyle: {
         backgroundColor: 'rgba(0, 0, 0, 0.75)',

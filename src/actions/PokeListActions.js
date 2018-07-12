@@ -49,13 +49,15 @@ export const pokemonFetch = (pokemonId) => {
                     .then(({data: {flavor_text_entries, genera}}) => {
                         console.log('received pokemen data')
                         console.log(genera);
-                        const flavor_text = flavor_text_entries.find((value) => {
+
+                        let flavor_text = flavor_text_entries.find((value) => {
                             return (value.language.name === EN && (value.version.name === "blue"));
                         }).flavor_text;
+                        flavor_text = flavor_text.replace(/[\n\r\f]/g, ' ');
 
                         const genus = genera.find((value) => {
                             return (value.language.name === EN)
-                        }).genus;
+                        }).genus.split(" ")[0];
 
                         dispatch({
                             type: POKEMON_FETCH_SUCCESS,

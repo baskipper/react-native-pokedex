@@ -23,70 +23,6 @@ class Gen1List extends Component {
 
     }
 
-    render() {
-
-        const {
-            headerTextStyle,
-            nameTextStyle,
-            headerContentStyle,
-            thumbnailStyle,
-            thumbnailContainerStyle
-        } = styles;
-
-        return (
-            this.props.dataLoaded ?
-                <View>
-                    <ListView
-                        onEndReached={() => {
-                            this.props.pokeListFetch(this.props.next)
-                        }}
-                        style={{marginBottom: 80}}
-                        enableEmptySections
-                        dataSource={this.props.pokeList}
-                        renderRow={this.renderRow}
-                    >
-                    </ListView>
-                    <DetailModal
-                        onAccept={this.closeModal}
-                        visible={this.state.showModal}
-                        loading={this.props.currentPokemon.loadingPokemon}
-                    >
-                        <Card>
-                        <CardSection>
-                            <View style={thumbnailContainerStyle}>
-                                <Image
-
-                                    source={
-                                        {
-                                            uri: this.props.currentPokemon.sprite,
-                                            cache: 'only-if-cached'
-                                        }}
-                                    style={thumbnailStyle}>
-
-                                </Image>
-                            </View>
-                            <View style={headerContentStyle}>
-                                <Text style={headerTextStyle}>
-                                    {this.props.currentPokemon.id}
-                                </Text>
-                                <Text style={nameTextStyle}>
-                                    {this.props.currentPokemon.name}
-                                </Text>
-                            </View>
-                        </CardSection>
-                        </Card>
-                    </DetailModal>
-                </View>
-                :
-                <Card>
-                    <CardSection>
-                        <Spinner/>
-                    </CardSection>
-                </Card>
-
-        )
-    }
-
     openModal(pokemon) {
         console.log(pokemon)
         this.props.pokemonFetch(parseInt(pokemon.id));
@@ -112,14 +48,12 @@ class Gen1List extends Component {
                     <CardSection>
                         <View style={thumbnailContainerStyle}>
                             <Image
-
                                 source={
                                     {
                                         uri: pokemon.imageUrl,
                                         cache: 'only-if-cached'
                                     }}
                                 style={thumbnailStyle}>
-
                             </Image>
                         </View>
                         <View style={headerContentStyle}>
@@ -137,9 +71,111 @@ class Gen1List extends Component {
 
         )
     }
-}
 
+    render() {
+
+        const {
+            headerTextStyle,
+            nameTextStyle,
+            headerContentStyle,
+            thumbnailStyle,
+            thumbnailContainerStyle
+        } = styles;
+
+        const {modalStyles: {imageStyle, entryStyle, nameStyle}} = styles;
+
+        return (
+            this.props.dataLoaded ?
+                <View>
+                    <ListView
+                        onEndReached={() => {
+                            this.props.pokeListFetch(this.props.next)
+                        }}
+                        style={{marginBottom: 80}}
+                        enableEmptySections
+                        dataSource={this.props.pokeList}
+                        renderRow={this.renderRow}
+                    >
+                    </ListView>
+                    <DetailModal
+                        onAccept={this.closeModal}
+                        visible={this.state.showModal}
+                        loading={this.props.currentPokemon.loadingPokemon}
+                    >
+                        <Card>
+                            <CardSection>
+                                <View style={thumbnailContainerStyle}>
+                                    <Image
+                                        source={
+                                            {
+                                                uri: this.props.currentPokemon.sprite,
+                                                cache: 'only-if-cached'
+                                            }}
+                                        style={imageStyle}>
+                                    </Image>
+                                    <Text style={headerTextStyle}>
+                                        No. {this.props.currentPokemon.id}
+                                    </Text>
+                                </View>
+                                <View style={nameStyle}>
+                                    <View>
+                                        <Text style={nameTextStyle}>
+                                            {this.props.currentPokemon.name}
+                                        </Text>
+                                        <Text style={{...nameTextStyle, paddingBottom:55}}>
+                                            {this.props.currentPokemon.genus}
+                                        </Text>
+                                    </View>
+                                    <View>
+                                        <Text>
+                                            HT: {this.props.currentPokemon.height / 10}m
+                                        </Text>
+                                        <Text>
+                                            WT: {this.props.currentPokemon.weight / 10}KG
+                                        </Text>
+                                    </View>
+                                </View>
+                            </CardSection>
+                            <CardSection>
+                                <View>
+                                    <Text style={entryStyle}>
+                                        {this.props.currentPokemon.flavor_text}
+                                    </Text>
+                                </View>
+                            </CardSection>
+                        </Card>
+                    </DetailModal>
+                </View>
+                :
+                <Card>
+                    <CardSection>
+                        <Spinner/>
+                    </CardSection>
+                </Card>
+
+        )
+    }
+
+}
+// maybe a top margin?
 const styles = {
+    modalStyles: {
+        imageStyle: {
+            height: 150,
+            width: 150
+        },
+        entryStyle: {
+            fontSize: 18
+        },
+        nameStyle: {
+            paddingTop: 40,
+            flexDirection: 'column',
+            justifyContent: 'space-around'
+
+        }
+    },
+
+
     headerTextStyle: {
         fontWeight: 'bold'
     },
@@ -166,7 +202,7 @@ const mapStateToProps = (state => {
     const {results, next} = state.pokemonList;
     console.log('state of list');
     console.log(state);
-    console.log(state.pokemonList)
+    console.log(state.currentPokemon.flavor_text)
     this.ds = new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
     });
