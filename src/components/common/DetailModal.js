@@ -2,8 +2,9 @@ import React from 'react';
 import {Text, View, Modal} from 'react-native';
 import {CardSection} from './CardSection'
 import {Button} from './Button';
+import {Spinner} from "./Spinner";
 
-const DetailModal = ({visible, children, onAccept}) => {
+const DetailModal = ({visible, children, onAccept, loading}) => {
     const {cardSectionStyle, textStyle, containerStyle} = styles;
     return (
         <Modal
@@ -16,7 +17,7 @@ const DetailModal = ({visible, children, onAccept}) => {
         >
             <View style={containerStyle}>
                 <CardSection style={cardSectionStyle}>
-                        {children}
+                        {loading ? <Spinner /> : children}
                 </CardSection>
                 <CardSection>
                     <Button onPress={onAccept}>

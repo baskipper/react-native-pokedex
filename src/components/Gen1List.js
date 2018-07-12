@@ -49,6 +49,7 @@ class Gen1List extends Component {
                     <DetailModal
                         onAccept={this.closeModal}
                         visible={this.state.showModal}
+                        loading={this.props.currentPokemon.loadingPokemon}
                     >
                         <Card>
                         <CardSection>
