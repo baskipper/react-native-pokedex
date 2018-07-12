@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View, Image, Text, TouchableOpacity, ListView} from 'react-native';
 import {connect} from 'react-redux';
-import {pokeListFetch, pokemonFetch} from "../actions";
+import {pokeListFetch, pokemonFetch, clearCurrentPokemon} from "../actions";
 
 import {Card, CardSection, Spinner, DetailModal} from "./common";
 
@@ -93,6 +93,7 @@ class Gen1List extends Component {
     }
 
     closeModal() {
+        this.props.clearCurrentPokemon();
         this.setState({showModal: false})
     }
 
@@ -177,4 +178,4 @@ const mapStateToProps = (state => {
     }
 });
 
-export default connect(mapStateToProps, {pokeListFetch, pokemonFetch})(Gen1List);
+export default connect(mapStateToProps, {pokeListFetch, pokemonFetch, clearCurrentPokemon})(Gen1List);

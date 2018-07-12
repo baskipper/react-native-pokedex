@@ -1,9 +1,14 @@
 import axios from 'axios'
-import {POKE_LIST_FETCH_SUCCESS, POKEMON_FETCH_SUCCESS} from "./types";
+import {
+    POKE_LIST_FETCH_SUCCESS,
+    POKEMON_FETCH_SUCCESS,
+    CLEAR_CURRENT_POKEMON
+} from "./types";
 
 const BASE_URL = "https://pokeapi.co/api/v2/";
 const DETAIL_URL = `${BASE_URL}pokemon/`;
 const LIST_URL = `${BASE_URL}pokemon?limit=25`;
+const EN = 'en';
 
 export const pokeListFetch = (dataUrl = LIST_URL) => {
     return (dispatch) => {
@@ -35,16 +40,22 @@ export const pokeListFetch = (dataUrl = LIST_URL) => {
 };
 
 export const pokemonFetch = (pokemonId) => {
-    return (dispatch) => {
+    return ((dispatch) => {
         let detailUrl = DETAIL_URL + pokemonId;
 
         axios.get(detailUrl)
-            .then(({data: {id, name, weight, height, species: {url}, sprites: {front_default}}}) => {
+            .then(({data: {id, name, weight, height, genera, species: {url}, sprites: {front_default}}}) => {
                 axios.get(url)
-                    .then(({data: {flavor_text_entries}}) => {
+                    .then(({data: {flavor_text_entries, genera}}) => {
+                        console.log('received pokemen data')
+                        console.log(genera);
                         const flavor_text = flavor_text_entries.find((value) => {
-                            return (value.language.name === "en" && (value.version.name === "blue"));
+                            return (value.language.name === EN && (value.version.name === "blue"));
                         }).flavor_text;
+
+                        const genus = genera.find((value) => {
+                            return (value.language.name === EN)
+                        }).genus;
 
                         dispatch({
                             type: POKEMON_FETCH_SUCCESS,
@@ -55,14 +66,22 @@ export const pokemonFetch = (pokemonId) => {
                                 height,
                                 species: url,
                                 sprite: front_default,
-                                flavor_text
+                                flavor_text,
+                                genus
                             }
                         })
                     })
 
             })
-    }
+    })
 };
+
+export const clearCurrentPokemon = () => {
+    return dispatch =>
+        dispatch({
+            type: CLEAR_CURRENT_POKEMON
+        })
+}
 
 const capitalizeName = (name) => {
     return name.charAt(0).toUpperCase().concat(name.substr(1));

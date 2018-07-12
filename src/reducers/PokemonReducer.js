@@ -1,4 +1,4 @@
-import {POKEMON_FETCH_SUCCESS} from "../actions/types";
+import {POKEMON_FETCH_SUCCESS, CLEAR_CURRENT_POKEMON} from "../actions/types";
 
 const INITIAL_STATE = {
     id: '',
@@ -7,7 +7,9 @@ const INITIAL_STATE = {
     height: '',
     species: '',
     sprite: '',
-    flavor_text: null
+    flavor_text: '',
+    genus: '',
+    loadingPokemon: true
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -15,7 +17,9 @@ export default (state = INITIAL_STATE, action) => {
         case POKEMON_FETCH_SUCCESS:
             console.log('currrent pokemon');
             console.log(action.payload);
-            return action.payload;
+            return { ...action.payload, loadingPokemon: false};
+        case CLEAR_CURRENT_POKEMON:
+            return INITIAL_STATE;
         default:
             return state;
     }
