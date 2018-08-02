@@ -8,11 +8,21 @@ import {
 const BASE_URL = "https://pokeapi.co/api/v2/";
 const DETAIL_URL = `${BASE_URL}pokemon/`;
 const LIST_URL = `${BASE_URL}pokemon?limit=25`;
+const PENULTIMATE_GEN1_URL = `${BASE_URL}pokemon/?limit=25&offset=150`;
+const ULTIMATE_GEN1_URL = `${BASE_URL}pokemon/?limit=1&offset=150`;
+const FINAL_GEN1_URL = `${BASE_URL}pokemon/?limit=1&offset=151`;
 const EN = 'en';
 
 export const pokeListFetch = (dataUrl = LIST_URL) => {
     return (dispatch) => {
-        console.log('dispatching')
+        console.log('dispatching');
+        if (dataUrl === PENULTIMATE_GEN1_URL)
+        {
+            dataUrl = ULTIMATE_GEN1_URL;
+        }
+        else if(dataUrl === FINAL_GEN1_URL){
+            return null;
+        }
         axios.get(dataUrl)
             .then(({data: {results, next}}) => {
                 console.log(results);
@@ -47,7 +57,7 @@ export const pokemonFetch = (pokemonId) => {
             .then(({data: {id, name, weight, height, genera, species: {url}, sprites: {front_default}}}) => {
                 axios.get(url)
                     .then(({data: {flavor_text_entries, genera}}) => {
-                        console.log('received pokemen data')
+                        console.log('received pokemen data');
                         console.log(genera);
 
                         let flavor_text = flavor_text_entries.find((value) => {
@@ -83,11 +93,11 @@ export const clearCurrentPokemon = () => {
         dispatch({
             type: CLEAR_CURRENT_POKEMON
         })
-}
+};
 
 const capitalizeName = (name) => {
     return name.charAt(0).toUpperCase().concat(name.substr(1));
-}
+};
 
 const formatId = (id) => {
     while (id.length < 3) {

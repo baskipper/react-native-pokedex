@@ -9,14 +9,14 @@ class Gen1List extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {showModal: false}
+        this.state = {showModal: false};
         this.openModal = this.openModal.bind(this);
         this.renderRow = this.renderRow.bind(this);
         this.closeModal = this.closeModal.bind(this);
     }
 
     componentDidMount() {
-        console.log(this.props.pokeList)
+        console.log(this.props.pokeList);
         if (!this.props.dataLoaded) {
             this.props.pokeListFetch();
         }
@@ -24,7 +24,7 @@ class Gen1List extends Component {
     }
 
     openModal(pokemon) {
-        console.log(pokemon)
+        console.log(pokemon);
         this.props.pokemonFetch(parseInt(pokemon.id));
         this.setState({showModal: true})
     }
@@ -50,8 +50,7 @@ class Gen1List extends Component {
                             <Image
                                 source={
                                     {
-                                        uri: pokemon.imageUrl,
-                                        cache: 'only-if-cached'
+                                        uri: pokemon.imageUrl
                                     }}
                                 style={thumbnailStyle}>
                             </Image>
@@ -77,8 +76,6 @@ class Gen1List extends Component {
         const {
             headerTextStyle,
             nameTextStyle,
-            headerContentStyle,
-            thumbnailStyle,
             thumbnailContainerStyle
         } = styles;
 
@@ -91,7 +88,7 @@ class Gen1List extends Component {
                         onEndReached={() => {
                             this.props.pokeListFetch(this.props.next)
                         }}
-                        style={{marginBottom: 80}}
+                        style={{marginBottom: 140}}
                         enableEmptySections
                         dataSource={this.props.pokeList}
                         renderRow={this.renderRow}
@@ -157,7 +154,8 @@ class Gen1List extends Component {
     }
 
 }
-// maybe a top margin?
+
+
 const styles = {
     modalStyles: {
         imageStyle: {
@@ -202,7 +200,7 @@ const mapStateToProps = (state => {
     const {results, next} = state.pokemonList;
     console.log('state of list');
     console.log(state);
-    console.log(state.currentPokemon.flavor_text)
+    console.log(state.currentPokemon.flavor_text);
     this.ds = new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
     });
