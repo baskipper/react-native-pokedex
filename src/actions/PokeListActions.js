@@ -25,10 +25,6 @@ export const pokeListFetch = (dataUrl = LIST_URL) => {
         }
         axios.get(dataUrl)
             .then(({data: {results, next}}) => {
-                console.log(results);
-                console.log('next');
-                console.log(next);
-                console.log(results[0].url.split('/'));
                 results = results.map((result) => {
                     const subStr = result.url.split('/');
                     let id = subStr[subStr.length - 2];
@@ -37,7 +33,6 @@ export const pokeListFetch = (dataUrl = LIST_URL) => {
                     result.id = formatId(id);
                     return result;
                 });
-                console.log(results);
                 dispatch({
                     type: POKE_LIST_FETCH_SUCCESS,
                     payload: {results, next}
@@ -54,12 +49,9 @@ export const pokemonFetch = (pokemonId) => {
         let detailUrl = DETAIL_URL + pokemonId;
 
         axios.get(detailUrl)
-            .then(({data: {id, name, weight, height, genera, species: {url}, sprites: {front_default}}}) => {
+            .then(({data: {id, name, weight, height, genera, stats, species: {url}, sprites: {front_default}}}) => {
                 axios.get(url)
                     .then(({data: {flavor_text_entries, genera}}) => {
-                        console.log('received pokemen data');
-                        console.log(genera);
-
                         let flavor_text = flavor_text_entries.find((value) => {
                             return (value.language.name === EN && (value.version.name === "blue"));
                         }).flavor_text;
@@ -76,6 +68,7 @@ export const pokemonFetch = (pokemonId) => {
                                 name: capitalizeName(name),
                                 weight,
                                 height,
+                                stats,
                                 species: url,
                                 sprite: front_default,
                                 flavor_text,

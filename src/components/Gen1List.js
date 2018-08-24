@@ -9,9 +9,7 @@ import {VictoryChart, VictoryTheme, VictoryGroup, VictoryArea, VictoryPolarAxis,
 
 
 const characterData = [
-    {strength: 1, intelligence: 250, luck: 1, stealth: 40, charisma: 50},
-    {strength: 2, intelligence: 300, luck: 2, stealth: 80, charisma: 90},
-    {strength: 5, intelligence: 225, luck: 3, stealth: 60, charisma: 60}
+    {speed: 45, specialDefense: 65, specialAttack: 65, defense: 40, attack: 50, hp:22}
 ];
 
 
@@ -30,28 +28,32 @@ class Gen1List extends Component {
     }
 
     getMaxima(data) {
+        console.log("incoming data");
+        console.log(data);
         const groupedData = Object.keys(data[0]).reduce((memo, key) => {
             memo[key] = data.map((d) => d[key]);
             return memo;
         }, {});
-        return Object.keys(groupedData).reduce((memo, key) => {
+        let returnval =  Object.keys(groupedData).reduce((memo, key) => {
             memo[key] = Math.max(...groupedData[key]);
             return memo;
         }, {});
+        console.log("returned maxima")
+        console.log(returnval);
+        return returnval;
     }
 
     processData(data) {
         const maxByGroup = this.getMaxima(data);
         const makeDataArray = (d) => {
             return Object.keys(d).map((key) => {
-                return {x: key, y: d[key] / maxByGroup[key]};
+                return {x: key, y: d[key]};
             });
         };
         return data.map((datum) => makeDataArray(datum));
     }
 
     componentDidMount() {
-        console.log(this.props.pokeList);
         if (!this.props.dataLoaded) {
             this.props.pokeListFetch();
         }
@@ -59,7 +61,6 @@ class Gen1List extends Component {
     }
 
     openModal(pokemon) {
-        console.log(pokemon);
         this.props.pokemonFetch(parseInt(pokemon.id));
         this.setState({showModal: true})
     }
@@ -177,17 +178,21 @@ class Gen1List extends Component {
 
                                     <VictoryChart polar
                                                   theme={VictoryTheme.material}
-                                                  domain={{ y: [ 0, 1 ] }}
                                     >
                                         <VictoryGroup colorScale={["gold", "orange", "tomato"]}
                                                       style={{ data: { fillOpacity: 0.2, strokeWidth: 2 } }}
                                         >
-                                            {this.state.data.map((data, i) => {
+                                            {this.props.currentPokemon.statMap.map((data, i) => {
+                                                console.log("data is ")
+                                                console.log(data)
+                                                console.log("I is")
+                                                console.log(i)
                                                 return <VictoryArea key={i} data={data}/>;
                                             })}
                                         </VictoryGroup>
                                         {
-                                            Object.keys(this.state.maxima).map((key, i) => {
+                                            Object.keys(this.props.currentPokemon.stats).map((key, i) => {
+
                                                 return (
                                                     <VictoryPolarAxis key={i} dependentAxis
                                                                       style={{
@@ -200,8 +205,7 @@ class Gen1List extends Component {
                                                                       }
                                                                       labelPlacement="perpendicular"
                                                                       axisValue={i + 1} label={key}
-                                                                      tickFormat={(t) => Math.ceil(t * this.state.maxima[key])}
-                                                                      tickValues={[0.25, 0.5, 0.75]}
+                                                                      tickCount={4}
                                                     />
                                                 );
                                             })
@@ -278,7 +282,7 @@ const mapStateToProps = (state => {
     const {results, next} = state.pokemonList;
     console.log('state of list');
     console.log(state);
-    console.log(state.currentPokemon.flavor_text);
+    console.log(state.currentPokemon.stats);
     this.ds = new ListView.DataSource({
         rowHasChanged: (r1, r2) => r1 !== r2
     });
