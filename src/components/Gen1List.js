@@ -1,17 +1,10 @@
 import React, {Component} from 'react';
 import {View, Image, Text, TouchableOpacity, ListView} from 'react-native';
 import {connect} from 'react-redux';
+
 import {pokeListFetch, pokemonFetch, clearCurrentPokemon} from "../actions";
-
-import {Card, CardSection, Spinner, DetailModal} from "./common";
-
-import {VictoryChart, VictoryTheme, VictoryGroup, VictoryArea, VictoryPolarAxis, VictoryLabel} from "victory-native";
-
-
-const characterData = [
-    {speed: 45, specialDefense: 65, specialAttack: 65, defense: 40, attack: 50, hp:22}
-];
-
+import {Card, CardSection, Spinner} from "./common";
+import PokemonDetailModal from "./PokemonDetailModal";
 
 class Gen1List extends Component {
 
@@ -29,7 +22,6 @@ class Gen1List extends Component {
         if (!this.props.dataLoaded) {
             this.props.pokeListFetch();
         }
-
     }
 
     openModal(pokemon) {
@@ -83,14 +75,6 @@ class Gen1List extends Component {
     render() {
 
         const {
-            headerTextStyle,
-            nameTextStyle,
-            thumbnailContainerStyle
-        } = styles;
-
-        const {modalStyles: {imageStyle, entryStyle, nameStyle}} = styles;
-
-        const {
             dataLoaded,
             pokeListFetch,
             next,
@@ -111,94 +95,11 @@ class Gen1List extends Component {
                         renderRow={this.renderRow}
                     >
                     </ListView>
-                    <DetailModal
+                    <PokemonDetailModal
                         onAccept={this.closeModal}
                         visible={this.state.showModal}
-                        loading={currentPokemon.loadingPokemon}
-                    >
-                        <Card>
-                            <CardSection>
-                                <View style={thumbnailContainerStyle}>
-                                    <Image
-                                        source={
-                                            {
-                                                uri: currentPokemon.sprite,
-                                                cache: 'only-if-cached'
-                                            }}
-                                        style={imageStyle}>
-                                    </Image>
-                                    <Text style={headerTextStyle}>
-                                        No. {currentPokemon.id}
-                                    </Text>
-                                </View>
-                                <View style={nameStyle}>
-                                    <View>
-                                        <Text style={nameTextStyle}>
-                                            {currentPokemon.name}
-                                        </Text>
-                                        <Text style={{...nameTextStyle, paddingBottom: 55}}>
-                                            {currentPokemon.genus}
-                                        </Text>
-                                    </View>
-                                    <View>
-                                        <Text>
-                                            HT: {currentPokemon.height / 10}m
-                                        </Text>
-                                        <Text>
-                                            WT: {currentPokemon.weight / 10}KG
-                                        </Text>
-                                    </View>
-                                </View>
-                            </CardSection>
-                            <CardSection>
-                                <View>
-                                    <Text style={entryStyle}>
-                                        {currentPokemon.flavor_text}
-                                    </Text>
-
-                                    <VictoryChart polar
-                                                  theme={VictoryTheme.material}
-                                    >
-                                        <VictoryGroup colorScale={["gold", "orange", "tomato"]}
-                                                      style={{ data: { fillOpacity: 0.2, strokeWidth: 2 } }}
-                                        >
-                                            <VictoryArea data={currentPokemon.statMap}/>
-
-                                        </VictoryGroup>
-                                        {
-                                            Object.keys(currentPokemon.stats).map((key, i) => {
-
-                                                return (
-                                                    <VictoryPolarAxis key={i} dependentAxis
-                                                                      style={{
-                                                                          axisLabel: { padding: 30 },
-                                                                          axis: { stroke: "none" },
-                                                                          grid: { stroke: "grey", strokeWidth: 0.25, opacity: 0.5 }
-                                                                      }}
-                                                                      tickLabelComponent={
-                                                                          <VictoryLabel labelPlacement="vertical"/>
-                                                                      }
-                                                                      labelPlacement="perpendicular"
-                                                                      axisValue={i + 1} label={key}
-                                                                      tickCount={4}
-                                                    />
-                                                );
-                                            })
-                                        }
-                                        <VictoryPolarAxis
-                                            labelPlacement="parallel"
-                                            tickFormat={() => ""}
-                                            style={{
-                                                axis: { stroke: "none" },
-                                                grid: { stroke: "grey", opacity: 0.5 }
-                                            }}
-                                        />
-
-                                    </VictoryChart>
-                                </View>
-                            </CardSection>
-                        </Card>
-                    </DetailModal>
+                        currentPokemon={currentPokemon}
+                    />
                 </View>
                 :
                 <Card>
@@ -209,28 +110,9 @@ class Gen1List extends Component {
 
         )
     }
-
 }
 
-
 const styles = {
-    modalStyles: {
-        imageStyle: {
-            height: 150,
-            width: 150
-        },
-        entryStyle: {
-            fontSize: 18
-        },
-        nameStyle: {
-            paddingTop: 40,
-            flexDirection: 'column',
-            justifyContent: 'space-around'
-
-        }
-    },
-
-
     headerTextStyle: {
         fontWeight: 'bold'
     },
