@@ -90,23 +90,31 @@ class Gen1List extends Component {
 
         const {modalStyles: {imageStyle, entryStyle, nameStyle}} = styles;
 
+        const {
+            dataLoaded,
+            pokeListFetch,
+            next,
+            pokeList,
+            currentPokemon
+        } = this.props;
+
         return (
-            this.props.dataLoaded ?
+            dataLoaded ?
                 <View>
                     <ListView
                         onEndReached={() => {
-                            this.props.pokeListFetch(this.props.next)
+                           pokeListFetch(next)
                         }}
                         style={{marginBottom: 140}}
                         enableEmptySections
-                        dataSource={this.props.pokeList}
+                        dataSource={pokeList}
                         renderRow={this.renderRow}
                     >
                     </ListView>
                     <DetailModal
                         onAccept={this.closeModal}
                         visible={this.state.showModal}
-                        loading={this.props.currentPokemon.loadingPokemon}
+                        loading={currentPokemon.loadingPokemon}
                     >
                         <Card>
                             <CardSection>
@@ -114,30 +122,30 @@ class Gen1List extends Component {
                                     <Image
                                         source={
                                             {
-                                                uri: this.props.currentPokemon.sprite,
+                                                uri: currentPokemon.sprite,
                                                 cache: 'only-if-cached'
                                             }}
                                         style={imageStyle}>
                                     </Image>
                                     <Text style={headerTextStyle}>
-                                        No. {this.props.currentPokemon.id}
+                                        No. {currentPokemon.id}
                                     </Text>
                                 </View>
                                 <View style={nameStyle}>
                                     <View>
                                         <Text style={nameTextStyle}>
-                                            {this.props.currentPokemon.name}
+                                            {currentPokemon.name}
                                         </Text>
                                         <Text style={{...nameTextStyle, paddingBottom: 55}}>
-                                            {this.props.currentPokemon.genus}
+                                            {currentPokemon.genus}
                                         </Text>
                                     </View>
                                     <View>
                                         <Text>
-                                            HT: {this.props.currentPokemon.height / 10}m
+                                            HT: {currentPokemon.height / 10}m
                                         </Text>
                                         <Text>
-                                            WT: {this.props.currentPokemon.weight / 10}KG
+                                            WT: {currentPokemon.weight / 10}KG
                                         </Text>
                                     </View>
                                 </View>
@@ -145,7 +153,7 @@ class Gen1List extends Component {
                             <CardSection>
                                 <View>
                                     <Text style={entryStyle}>
-                                        {this.props.currentPokemon.flavor_text}
+                                        {currentPokemon.flavor_text}
                                     </Text>
 
                                     <VictoryChart polar
@@ -154,11 +162,11 @@ class Gen1List extends Component {
                                         <VictoryGroup colorScale={["gold", "orange", "tomato"]}
                                                       style={{ data: { fillOpacity: 0.2, strokeWidth: 2 } }}
                                         >
-                                            <VictoryArea data={this.props.currentPokemon.statMap}/>
+                                            <VictoryArea data={currentPokemon.statMap}/>
 
                                         </VictoryGroup>
                                         {
-                                            Object.keys(this.props.currentPokemon.stats).map((key, i) => {
+                                            Object.keys(currentPokemon.stats).map((key, i) => {
 
                                                 return (
                                                     <VictoryPolarAxis key={i} dependentAxis
