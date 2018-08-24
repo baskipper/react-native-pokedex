@@ -21,36 +21,8 @@ class Gen1List extends Component {
         this.renderRow = this.renderRow.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.state = {
-            data: this.processData(characterData),
-            maxima: this.getMaxima(characterData),
             showModal: false
         };
-    }
-
-    getMaxima(data) {
-        console.log("incoming data");
-        console.log(data);
-        const groupedData = Object.keys(data[0]).reduce((memo, key) => {
-            memo[key] = data.map((d) => d[key]);
-            return memo;
-        }, {});
-        let returnval =  Object.keys(groupedData).reduce((memo, key) => {
-            memo[key] = Math.max(...groupedData[key]);
-            return memo;
-        }, {});
-        console.log("returned maxima")
-        console.log(returnval);
-        return returnval;
-    }
-
-    processData(data) {
-        const maxByGroup = this.getMaxima(data);
-        const makeDataArray = (d) => {
-            return Object.keys(d).map((key) => {
-                return {x: key, y: d[key]};
-            });
-        };
-        return data.map((datum) => makeDataArray(datum));
     }
 
     componentDidMount() {
@@ -182,13 +154,8 @@ class Gen1List extends Component {
                                         <VictoryGroup colorScale={["gold", "orange", "tomato"]}
                                                       style={{ data: { fillOpacity: 0.2, strokeWidth: 2 } }}
                                         >
-                                            {this.props.currentPokemon.statMap.map((data, i) => {
-                                                console.log("data is ")
-                                                console.log(data)
-                                                console.log("I is")
-                                                console.log(i)
-                                                return <VictoryArea key={i} data={data}/>;
-                                            })}
+                                            <VictoryArea data={this.props.currentPokemon.statMap}/>
+
                                         </VictoryGroup>
                                         {
                                             Object.keys(this.props.currentPokemon.stats).map((key, i) => {
@@ -196,7 +163,7 @@ class Gen1List extends Component {
                                                 return (
                                                     <VictoryPolarAxis key={i} dependentAxis
                                                                       style={{
-                                                                          axisLabel: { padding: 10 },
+                                                                          axisLabel: { padding: 30 },
                                                                           axis: { stroke: "none" },
                                                                           grid: { stroke: "grey", strokeWidth: 0.25, opacity: 0.5 }
                                                                       }}

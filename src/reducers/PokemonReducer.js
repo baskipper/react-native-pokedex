@@ -26,7 +26,7 @@ const mapStats = (stats) => {
     const mappedStats = stats.map((currentStat, index) => {
         return {x: currentStat.stat.name, y: currentStat.base_stat}
     })
-    return [mappedStats];
+    return mappedStats;
 }
 
 export default (state = INITIAL_STATE, action) => {
