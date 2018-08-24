@@ -12,6 +12,7 @@ const PENULTIMATE_GEN1_URL = `${BASE_URL}pokemon/?limit=25&offset=150`;
 const ULTIMATE_GEN1_URL = `${BASE_URL}pokemon/?limit=1&offset=150`;
 const FINAL_GEN1_URL = `${BASE_URL}pokemon/?limit=1&offset=151`;
 const EN = 'en';
+let requestInProgress = false;
 
 export const pokeListFetch = (dataUrl = LIST_URL) => {
     return (dispatch) => {
@@ -23,24 +24,30 @@ export const pokeListFetch = (dataUrl = LIST_URL) => {
         else if(dataUrl === FINAL_GEN1_URL){
             return null;
         }
-        axios.get(dataUrl)
-            .then(({data: {results, next}}) => {
-                results = results.map((result) => {
-                    const subStr = result.url.split('/');
-                    let id = subStr[subStr.length - 2];
-                    result.imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-                    result.name = capitalizeName(result.name);
-                    result.id = formatId(id);
-                    return result;
-                });
-                dispatch({
-                    type: POKE_LIST_FETCH_SUCCESS,
-                    payload: {results, next}
+        if(!requestInProgress) {
+            requestInProgress = true;
+            axios.get(dataUrl)
+                .then(({data: {results, next}}) => {
+                    results = results.map((result) => {
+                        const subStr = result.url.split('/');
+                        let id = subStr[subStr.length - 2];
+                        result.imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+                        result.name = capitalizeName(result.name);
+                        result.id = formatId(id);
+                        return result;
+                    });
+                    dispatch({
+                        type: POKE_LIST_FETCH_SUCCESS,
+                        payload: {results, next}
+                    })
                 })
-            })
-            .catch(err => {
-                console.log(`Error: ${err}`)
-            })
+                .catch(err => {
+                    console.log(`Error: ${err}`)
+                })
+                .finally(() => {
+                    requestInProgress = false;
+                })
+        }
     }
 };
 
